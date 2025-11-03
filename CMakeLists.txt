@@ -14,3 +14,4 @@ target_include_directories(liblogreg PUBLIC "src/lib/")
 # Build logistic regression executable
 add_executable(logreg "src/main.c")
 target_link_libraries(logreg liblogreg)
+target_link_libraries(liblogreg PUBLIC m)

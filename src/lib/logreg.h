@@ -4,6 +4,8 @@
 #include "array.h"
 #include "dataset.h"
 
+#define LOGREG_SMALL_NUMBER 1e-8
+
 typedef enum {
   LOGREG_OK,
 } LogRegError;
@@ -14,8 +16,12 @@ typedef struct {
   Array weights;
 } LogReg;
 
-LogRegError logreg_train(LogReg *logreg, Dataset *dataset, float learning_rate);
+LogRegError logreg_train(LogReg *logreg, Dataset *dataset, float learning_rate,
+                         unsigned int max_iterations);
 LogRegError logreg_free(LogReg *logreg);
-LogRegError logreg_predict(LogReg *logreg, Array2D *features, Array *prediction);
+LogRegError logreg_predict(LogReg *logreg, Array2D *features,
+                           Array *prediction);
+
+void logreg_print(LogReg *logreg);
 
 #endif

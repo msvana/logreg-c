@@ -1,5 +1,6 @@
 #include "array.h"
 #include <stdlib.h>
+#include <string.h>
 
 ArrayError array_init(Array *array) {
   array->size = 0;
@@ -83,6 +84,22 @@ ArrayError array2d_push_row(Array2D *array, Array *row) {
     array->data[array->rows * array->columns + i] = row->data[i];
   }
 
+  array->rows++;
+  return ARRAY_OK;
+}
+
+ArrayError array2d_push_row_raw(Array2D *array, float *data) {
+  if (array->rows == array->capacity) {
+    array->capacity += ARRAY_INITIAL_CAPACITY;
+    array->data =
+        realloc(array->data, sizeof(float) * array->capacity * array->columns);
+
+    if (array->data == NULL) {
+      return ARRAY_ALLOCATION_ERROR;
+    }
+  }
+
+  memcpy(array->data + array->rows * array->columns, data, array->columns * sizeof(float));
   array->rows++;
   return ARRAY_OK;
 }

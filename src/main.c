@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "lib/dataset.h"
+#include "lib/logreg.h"
 
 int main(int argc, char *argv[]) {
   char *path = argv[1];
@@ -14,6 +15,25 @@ int main(int argc, char *argv[]) {
   }
 
   dataset_print(&dataset);
+
+  printf("Training logistic regression model\n");
+  LogReg logreg;
+  logreg_train(&logreg, &dataset, 0.01, 100);
+  logreg_print(&logreg);
+  
+  printf("Predicting\n");
+  Array predictions;
+  logreg_predict(&logreg, &dataset.features, &predictions);
+  
+  for (int i = 0; i < dataset.labels.size; i++) {
+    float prediction;
+    array_item(&predictions, i, &prediction);
+    printf("Pre: %f ", prediction);
+    printf("Exp: %f\n", dataset.labels.data[i]);
+  }
+
+
+  logreg_free(&logreg);
   dataset_free(&dataset);
 
   return 0;

@@ -22,24 +22,18 @@ DatasetError dataset_load_iris(Dataset *dataset, const char *path) {
     return DATASET_FILE_ERROR;
   }
 
-  char line[1024];
-  int num_examples = 0;
-
+  char line[64];
+  float feature_row[NUM_FEATURES];
   char *label;
 
   // Skip header
   fgets(line, sizeof(line), file);
 
   while (fgets(line, sizeof(line), file)) {
-    num_examples++;
-
-    Array feature_row;
-    array_init(&feature_row);
-
-    array_push(&feature_row, strtof(strtok(line, ","), NULL));
-    array_push(&feature_row, strtof(strtok(NULL, ","), NULL));
-    array_push(&feature_row, strtof(strtok(NULL, ","), NULL));
-    array_push(&feature_row, strtof(strtok(NULL, ","), NULL));
+    feature_row[0] = strtof(strtok(line, ","), NULL);
+    feature_row[1] = strtof(strtok(NULL, ","), NULL);
+    feature_row[2] = strtof(strtok(NULL, ","), NULL);
+    feature_row[3] = strtof(strtok(NULL, ","), NULL);
 
     label = strtok(NULL, ",");
 
@@ -48,20 +42,13 @@ DatasetError dataset_load_iris(Dataset *dataset, const char *path) {
     } else if (strcmp(label, "versicolor\n") == 0) {
       array_push(&dataset->labels, 1);
     } else {
-      array_free(&feature_row);
       continue;
     }
 
-    array2d_push_row(&dataset->features, &feature_row);
-    array_free(&feature_row);
+    array2d_push_row_raw(&dataset->features, feature_row);
   }
 
-  printf("Loaded %d examples\n", num_examples);
-  printf("Features: %d\n", dataset->features.columns);
-  printf("Labels: %d\n", dataset->labels.size);
-  printf("Rows: %d\n", dataset->features.rows);
   fclose(file);
-
   return DATASET_OK;
 }
 
@@ -82,6 +69,9 @@ DatasetError dataset_print(Dataset *dataset) {
 
     printf("| %f\n", dataset->labels.data[i]);
   }
+  
+  printf("Features: %d\n", dataset->features.columns);
+  printf("Rows: %d\n", dataset->features.rows);
 
   return DATASET_OK;
 }

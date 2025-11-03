@@ -32,5 +32,6 @@ ArrayError array2d_init(Array2D *array, int num_columns);
 ArrayError array2d_free(Array2D *array);
 ArrayError array2d_item(Array2D *array, int row, int column, float *item);
 ArrayError array2d_push_row(Array2D *array, Array *row);
+ArrayError array2d_push_row_raw(Array2D *array, float *data);
 
 #endif
