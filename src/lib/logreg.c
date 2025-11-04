@@ -21,7 +21,7 @@ Error logreg_train(LogReg *logreg, Dataset *dataset, float lr, size_t n_iter) {
   float loss, y_pred, y_exp, feature;
 
   for (size_t i = 0; i < n_iter; i++) {
-    error = logreg_predict(logreg, &dataset->features, &pred);
+    error = logreg_predict_soft(logreg, &dataset->features, &pred);
     RETURN_IF_ERROR(error);
 
     for (size_t j = 0; j < dataset->labels.size; j++) {
@@ -45,7 +45,7 @@ Error logreg_train(LogReg *logreg, Dataset *dataset, float lr, size_t n_iter) {
 
 void logreg_free(LogReg *logreg) { array_free(&logreg->weights); }
 
-Error logreg_predict(LogReg *logreg, Array2D *features, Array *pred) {
+Error logreg_predict_soft(LogReg *logreg, Array2D *features, Array *pred) {
   Error error;
   error = array_init(pred);
   RETURN_IF_ERROR(error);
@@ -71,6 +71,33 @@ Error logreg_predict(LogReg *logreg, Array2D *features, Array *pred) {
     RETURN_IF_ERROR(error);
   }
 
+  return E_OK;
+}
+
+Error logreg_predict(LogReg *logreg, Array2D *features, Array *pred) {
+  Error error;
+  Array pred_soft;
+  float y_pred;
+
+  error = array_init(pred);
+  RETURN_IF_ERROR(error);
+
+  error = logreg_predict_soft(logreg, features, &pred_soft);
+  RETURN_IF_ERROR(error);
+
+  for (size_t i = 0; i < pred_soft.size; i++) {
+    error = array_item(&pred_soft, i, &y_pred);
+
+    if (y_pred > 0.5) {
+      error = array_push(pred, 1);
+    } else {
+      error = array_push(pred, 0);
+    }
+
+    RETURN_IF_ERROR(error);
+  }
+
+  array_free(&pred_soft);
   return E_OK;
 }
 
