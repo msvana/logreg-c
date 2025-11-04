@@ -15,6 +15,22 @@ Error array_init(Array *array) {
   return E_OK;
 }
 
+Error array_init_static(Array *array, size_t size, float default_value) {
+  array->size = size;
+  array->capacity = size;
+  array->data = malloc(sizeof(float) * array->capacity);
+
+  if (array->data == NULL) {
+    return E_ALLOCATION;
+  }
+
+  for (size_t i = 0; i < size; i++) {
+    array->data[i] = default_value;
+  }
+
+  return E_OK;
+}
+
 void array_free(Array *array) { free(array->data); }
 
 Error array_item(Array *array, size_t index, float *item) {
@@ -38,6 +54,15 @@ Error array_push(Array *array, float item) {
 
   array->data[array->size] = item;
   array->size++;
+  return E_OK;
+}
+
+Error array_set(Array *array, size_t index, float item) {
+  if (index >= array->size) {
+    return E_INDEX;
+  }
+
+  array->data[index] = item;
   return E_OK;
 }
 

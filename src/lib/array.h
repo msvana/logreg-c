@@ -13,8 +13,10 @@ typedef struct {
 } Array;
 
 Error array_init(Array *array);
+Error array_init_static(Array *array, size_t size, float default_value);
 void array_free(Array *array);
 Error array_item(Array *array, size_t index, float *item);
+Error array_set(Array *array, size_t index, float item);
 Error array_push(Array *array, float item);
 
 typedef struct {

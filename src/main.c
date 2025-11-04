@@ -40,6 +40,7 @@ int main(int argc, char *argv[]) {
 
   printf("Predicting\n");
   Array pred;
+  array_init_static(&pred, test.labels.size, 0.0);
   float y_exp, y_pred;
 
   error = logreg_predict(&logreg, &test.features, &pred);
