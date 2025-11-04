@@ -57,6 +57,11 @@ int main(int argc, char *argv[]) {
     printf("Exp: %f\n", y_exp);
   }
 
+  float accuracy;
+  error = logreg_accuracy(&logreg, &test, &accuracy);
+  PRINT_AND_RETURN_IF_ERROR(error);
+  printf("Accuracy: %f\n", accuracy);
+
   array_free(&pred);
   logreg_free(&logreg);
   dataset_free(&dataset);

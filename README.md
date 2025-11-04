@@ -5,8 +5,9 @@ Besides Logistic Regression itself, the project also contains simple
 implementations of required primives:
 
 - 2D array
-- dataset struct and loader
-- train and test split
+- Dataset struct and loader
+- Train and test split
+- Accuracy calculation
 
 ## Compilation
 

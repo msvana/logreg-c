@@ -19,5 +19,6 @@ void logreg_free(LogReg *logreg);
 Error logreg_predict_soft(LogReg *logreg, Array2D *features, Array *pred);
 Error logreg_predict(LogReg *logreg, Array2D *features, Array *pred);
 Error logreg_print(LogReg *logreg);
+Error logreg_accuracy(LogReg *logreg, Dataset *dataset, float *accuracy);
 
 #endif

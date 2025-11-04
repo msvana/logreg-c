@@ -116,3 +116,32 @@ Error logreg_print(LogReg *logreg) {
   printf("\n");
   return E_OK;
 }
+
+Error logreg_accuracy(LogReg *logreg, Dataset *dataset, float *accuracy) {
+  Error error;
+  Array pred;
+  array_init_static(&pred, dataset->labels.size, 0.0);
+
+  error = logreg_predict(logreg, &dataset->features, &pred);
+  RETURN_IF_ERROR(error);
+
+  float y_exp, y_pred;
+  size_t correct = 0;
+
+  for (size_t i = 0; i < dataset->labels.size; i++) {
+    error = array_item(&pred, i, &y_pred);
+    RETURN_IF_ERROR(error);
+
+    error = array_item(&dataset->labels, i, &y_exp);
+    RETURN_IF_ERROR(error);
+
+    if (y_pred - y_exp < LOGREG_SMALL_NUMBER &&
+        y_exp - y_pred < LOGREG_SMALL_NUMBER) {
+      correct++;
+    }
+  }
+
+  *accuracy = correct / (float)dataset->labels.size;
+  array_free(&pred);
+  return E_OK;
+}
