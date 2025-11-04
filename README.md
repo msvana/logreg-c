@@ -1,8 +1,8 @@
 # Logistic Regression in C
 
-Why? Because I can. And also becuase I'm an ML guy who wants to learn C.
+Why? Because I can. And also because I'm an ML guy who wants to learn C.
 Besides Logistic Regression itself, the project also contains simple
-implementations of required primives:
+implementations of required primitives:
 
 - 2D array
 - Dataset struct and loader
