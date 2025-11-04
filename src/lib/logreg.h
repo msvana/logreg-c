@@ -3,25 +3,20 @@
 
 #include "array.h"
 #include "dataset.h"
+#include "error.h"
+#include <stdlib.h>
 
 #define LOGREG_SMALL_NUMBER 1e-8
 
-typedef enum {
-  LOGREG_OK,
-} LogRegError;
-
 typedef struct {
-  float learning_rate;
+  float lr;
   float bias;
   Array weights;
 } LogReg;
 
-LogRegError logreg_train(LogReg *logreg, Dataset *dataset, float learning_rate,
-                         unsigned int max_iterations);
-LogRegError logreg_free(LogReg *logreg);
-LogRegError logreg_predict(LogReg *logreg, Array2D *features,
-                           Array *prediction);
-
-void logreg_print(LogReg *logreg);
+Error logreg_train(LogReg *logreg, Dataset *dataset, float lr, size_t n_iter);
+void logreg_free(LogReg *logreg);
+Error logreg_predict(LogReg *logreg, Array2D *features, Array *pred);
+Error logreg_print(LogReg *logreg);
 
 #endif

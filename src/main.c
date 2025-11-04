@@ -1,38 +1,62 @@
-#include <stdio.h>
 #include "lib/dataset.h"
+#include "lib/error.h"
 #include "lib/logreg.h"
+#include <stdio.h>
 
 int main(int argc, char *argv[]) {
+  Error error;
+
   char *path = argv[1];
   printf("Loading dataset from %s\n", path);
 
   Dataset dataset;
-  DatasetError error = dataset_load_iris(&dataset, path);
+  error = dataset_load_iris(&dataset, path);
+  PRINT_AND_RETURN_IF_ERROR(error);
 
-  if (error != DATASET_OK) {
-    printf("Error loading dataset: %d\n", error);
-    return 1;
-  }
+  printf("Shuffling dataset\n");
+  error = dataset_shuffle(&dataset);
+  PRINT_AND_RETURN_IF_ERROR(error);
 
-  dataset_print(&dataset);
+  printf("Splitting dataset\n");
+  Dataset train, test;
+  error = dataset_split(&dataset, 0.8, &train, &test);
+  PRINT_AND_RETURN_IF_ERROR(error);
+
+  printf("Printing TRAIN dataset\n");
+  error = dataset_print(&train);
+  PRINT_AND_RETURN_IF_ERROR(error);
+
+  printf("Printing TEST dataset\n");
+  error = dataset_print(&test);
+  PRINT_AND_RETURN_IF_ERROR(error);
 
   printf("Training logistic regression model\n");
   LogReg logreg;
-  logreg_train(&logreg, &dataset, 0.01, 100);
-  logreg_print(&logreg);
-  
+  error = logreg_train(&logreg, &train, 0.01, 10);
+  PRINT_AND_RETURN_IF_ERROR(error);
+
+  error = logreg_print(&logreg);
+  PRINT_AND_RETURN_IF_ERROR(error);
+
   printf("Predicting\n");
-  Array predictions;
-  logreg_predict(&logreg, &dataset.features, &predictions);
-  
-  for (int i = 0; i < dataset.labels.size; i++) {
-    float prediction;
-    array_item(&predictions, i, &prediction);
-    printf("Pre: %f ", prediction);
-    printf("Exp: %f\n", dataset.labels.data[i]);
+  Array pred;
+  float y_exp, y_pred;
+
+  error = logreg_predict(&logreg, &test.features, &pred);
+  PRINT_AND_RETURN_IF_ERROR(error);
+
+  for (size_t i = 0; i < test.labels.size; i++) {
+    error = array_item(&pred, i, &y_pred);
+    PRINT_AND_RETURN_IF_ERROR(error);
+
+    error = array_item(&test.labels, i, &y_exp);
+    PRINT_AND_RETURN_IF_ERROR(error);
+
+    printf("Pre: %f ", y_pred);
+    printf("Exp: %f\n", y_exp);
   }
 
-
+  array_free(&pred);
   logreg_free(&logreg);
   dataset_free(&dataset);
 

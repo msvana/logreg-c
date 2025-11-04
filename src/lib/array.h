@@ -3,35 +3,32 @@
 
 #define ARRAY_INITIAL_CAPACITY 16
 
-typedef enum {
-  ARRAY_OK,
-  ARRAY_ALLOCATION_ERROR,
-  ARRAY_INDEX_OUT_OF_BOUNDS,
-  ARRAY_DIMENSION_MISMATCH,
-} ArrayError;
+#include "error.h"
+#include <stdlib.h>
 
 typedef struct {
-  int size;
-  int capacity;
+  size_t size;
+  size_t capacity;
   float *data;
 } Array;
 
-ArrayError array_init(Array *array);
-ArrayError array_free(Array *array);
-ArrayError array_item(Array *array, int index, float *item);
-ArrayError array_push(Array *array, float item);
+Error array_init(Array *array);
+void array_free(Array *array);
+Error array_item(Array *array, size_t index, float *item);
+Error array_push(Array *array, float item);
 
 typedef struct {
-  int columns;
-  int rows;
-  int capacity;
+  size_t columns;
+  size_t rows;
+  size_t capacity;
   float *data;
 } Array2D;
 
-ArrayError array2d_init(Array2D *array, int num_columns);
-ArrayError array2d_free(Array2D *array);
-ArrayError array2d_item(Array2D *array, int row, int column, float *item);
-ArrayError array2d_push_row(Array2D *array, Array *row);
-ArrayError array2d_push_row_raw(Array2D *array, float *data);
+Error array2d_init(Array2D *array, size_t num_columns);
+void array2d_free(Array2D *array);
+Error array2d_item(Array2D *array, size_t row, size_t column, float *item);
+Error array2d_push_row(Array2D *array, Array *row);
+Error array2d_push_row_raw(Array2D *array, float *data);
+Error array2d_switch_rows(Array2D *array, size_t r1, size_t r2);
 
 #endif
